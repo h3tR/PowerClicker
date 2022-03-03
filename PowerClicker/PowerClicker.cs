@@ -15,7 +15,9 @@ namespace WindowsFormsApp1
         private uint HoldY;
         private TimeHandler RegularTime = new TimeHandler(0, 1, 0);
         private TimeHandler HoldTime = new TimeHandler(0, 0, 999);
+        // debounce for CompleteTimeOp function
         private bool InTimeOp = false;
+        // if true will set hold timer to the regular timer -1 millisecond 
         private bool requireHoldTimeInitVal = false;
 
         private bool ClickingEnabled = false;
@@ -38,10 +40,9 @@ namespace WindowsFormsApp1
             MIDDLE,
             ALL
         }
+        // Handles Time operations: creating TimeHandlers, validating values and writing to the input fields on the GUI
         private void completeTimeOp()
         {
-            Console.WriteLine("hello");
-
             if (!InTimeOp)
             {
                 InTimeOp = true;
@@ -91,6 +92,7 @@ namespace WindowsFormsApp1
                 InTimeOp = false;
             }
         }
+        // Generates string from given keycode
         private string getUnicodeFromKeycode(Keys e)
         {
             StringBuilder charPressed = new StringBuilder(256);
@@ -99,7 +101,6 @@ namespace WindowsFormsApp1
         }
         private void mouseClick(object sender, MouseEventArgs e)
         {
-            Console.WriteLine("Hello");
             if (SetCoords && e.Button == MouseButtons.Left)
             {
                 SetCoords = false;
@@ -108,7 +109,7 @@ namespace WindowsFormsApp1
 
             }
         }
-
+        //constructor, Duh!
         public PowerClicker()
         {
             InitializeComponent();
@@ -116,6 +117,7 @@ namespace WindowsFormsApp1
             RegisterHotKey(this.Handle, 0, 0, Keys.F6.GetHashCode());
         }
 
+        //event for hotkey press
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
@@ -123,10 +125,9 @@ namespace WindowsFormsApp1
             if (m.Msg == 0x0312)
             {
                 toggleClicking();
-                // do something
             }
         }
-
+        // simulates a mouseclick at a given position according to the given MouseSide Enum value
         private void DoMouseClickAt(uint X, uint Y, MouseSide Side)
         {
             if (Side == MouseSide.LEFT)
@@ -212,6 +213,7 @@ namespace WindowsFormsApp1
                 }
             }
         }
+        // Simulates a mouseclick at the current position of the cursor
         private void DoMouseClickAtCursor(MouseSide Side)
         {
             uint X = Convert.ToUInt32(Cursor.Position.X);
@@ -277,7 +279,6 @@ namespace WindowsFormsApp1
                 }
                 else
                 {
-                    Console.WriteLine(RegularTime.TotalMillis);
                     this.HoldSelect.Enabled = false;
                     this.HoldTimerBox.Visible = false;
                     this.InstantSelect.Checked = true;
@@ -305,6 +306,7 @@ namespace WindowsFormsApp1
         {
             this.TimesDoneLabel.Text = timesdone.ToString() + "/" + this.TimesInput.Value.ToString();
         }
+        // removes hot key reference when closing the program
         private void PowerClicker_FormClosing(object sender, FormClosingEventArgs e)
         {
             UnregisterHotKey(this.Handle, 0);
@@ -472,7 +474,6 @@ namespace WindowsFormsApp1
 
         private void CoordsButton_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("newcoords");
             SetCoords = true;
         }
 
@@ -493,50 +494,16 @@ namespace WindowsFormsApp1
             }
             public void ValidateValue()
             {
-                /* if(this.TotalMillis < 1000) {
-                     this.Minutes = 0;
-                     this.Seconds = 0;
-                     this.MilliSeconds = this.TotalMillis;
-                 } else if(this.TotalMillis < 60000){
-                     this.Minutes = 0;
-                     this.Seconds = Convert.ToInt32(this.TotalMillis.ToString().Substring(1, 2));
-                     this.MilliSeconds = this.TotalMillis - this.Seconds;
-                 }
-                 else if(this.TotalMillis%60000==0){
-                     this.Minutes = this.TotalMillis / 60000;
-                     this.Seconds = 0;
-                     this.MilliSeconds = 0;
-                 }
-                 else
-                 {*/
                 int processedMilSecs = this.TotalMillis;
                 this.Minutes = (this.TotalMillis - this.TotalMillis % 60000) / 60000;
                 processedMilSecs -= this.Minutes * 60000;
                 this.Seconds = (processedMilSecs - processedMilSecs % 1000) / 1000;
                 processedMilSecs -= this.Seconds * 1000;
                 this.MilliSeconds = processedMilSecs;
-                Console.WriteLine("Minutes: " + this.Minutes.ToString());
-                Console.WriteLine("Seconds: " + this.Seconds.ToString());
-                Console.WriteLine("MilliSeconds: " + this.MilliSeconds.ToString());
 
-                //}
                 this.TotalMillis = this.MilliSeconds + this.Seconds * 1000 + this.Minutes * 60000;
                 if (this.Minutes > 999)
-                    this.Minutes = 999;
-
-                /*  Console.WriteLine(Minutes);
-                  Console.WriteLine(Seconds);
-                  Console.WriteLine(MilliSeconds);
-                  Console.WriteLine(TotalMillis);
-
-                  Console.WriteLine("------------");
-
-                  Console.WriteLine((this.TotalMillis - this.TotalMillis % 60000) / 60000);
-                  Console.WriteLine((this.TotalMillis - this.TotalMillis % 60000));
-
-                  Console.WriteLine("__________________________");
-                */
-
+                    this.Minutes = 999; 
             }
         }
 
