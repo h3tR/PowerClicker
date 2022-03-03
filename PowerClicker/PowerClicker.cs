@@ -13,6 +13,10 @@ namespace WindowsFormsApp1
         private bool SetCoords = false;
         private uint HoldX;
         private uint HoldY;
+        private TimeHandler RegularTime = new TimeHandler(0, 1, 0);
+        private TimeHandler HoldTime = new TimeHandler(0, 0, 999);
+        private bool InTimeOp = false;
+        private bool requireHoldTimeInitVal = false;
 
         private bool ClickingEnabled = false;
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
@@ -23,7 +27,7 @@ namespace WindowsFormsApp1
         [DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern int ToUnicode(uint virtualKeyCode, uint scanCode, byte[] keyboardState, System.Text.StringBuilder receivingBuffer,int bufferSize, uint flags);
+        public static extern int ToUnicode(uint virtualKeyCode, uint scanCode, byte[] keyboardState, System.Text.StringBuilder receivingBuffer, int bufferSize, uint flags);
 
         private int timesdone = 0;
         enum MouseSide
@@ -33,6 +37,59 @@ namespace WindowsFormsApp1
             BOTH,
             MIDDLE,
             ALL
+        }
+        private void completeTimeOp()
+        {
+            Console.WriteLine("hello");
+
+            if (!InTimeOp)
+            {
+                InTimeOp = true;
+
+                this.RegularTime = new TimeHandler((int)this.MilSecInput.Value, (int)this.SecInput.Value, (int)this.MinInput.Value);
+                if (this.RegularTime.TotalMillis < 1)
+                {
+                    this.RegularTime.TotalMillis = 1;
+                    this.RegularTime.ValidateValue();
+                }
+
+                if (this.MinInput.Value != this.RegularTime.Minutes || this.SecInput.Value != this.RegularTime.Seconds || this.MilSecInput.Value != this.RegularTime.MilliSeconds)
+                {
+                    this.MinInput.Value = this.RegularTime.Minutes;
+                    this.SecInput.Value = this.RegularTime.Seconds;
+                    this.MilSecInput.Value = this.RegularTime.MilliSeconds;
+
+                }
+                if (this.HoldSelect.Checked)
+                {
+                    this.HoldTime = new TimeHandler((int)this.HoldMilSecInput.Value, (int)this.HoldSecInput.Value, (int)this.HoldMinInput.Value);
+                    if (requireHoldTimeInitVal)
+                    {
+                        this.HoldTime.TotalMillis = this.RegularTime.TotalMillis - 1;
+                        this.HoldTime.ValidateValue();
+                        requireHoldTimeInitVal=false;
+                    }
+
+                    if (this.HoldTime.TotalMillis < 1)
+                    {
+                        this.HoldTime.TotalMillis = 1;
+                        this.HoldTime.ValidateValue();
+                    }
+                    else if (this.HoldTime.TotalMillis >= RegularTime.TotalMillis)
+                    {
+                        this.HoldTime.TotalMillis = RegularTime.TotalMillis - 1;
+                        this.HoldTime.ValidateValue();
+                    }
+                    if (this.HoldMinInput.Value != this.HoldTime.Minutes || this.HoldSecInput.Value != this.HoldTime.Seconds || this.HoldMilSecInput.Value != this.HoldTime.MilliSeconds)
+                    {
+                        this.HoldMinInput.Value = this.HoldTime.Minutes;
+                        this.HoldSecInput.Value = this.HoldTime.Seconds;
+                        this.HoldMilSecInput.Value = this.HoldTime.MilliSeconds;
+                    }
+
+                }
+                InTimeOp = false;
+            }
         }
         private string getUnicodeFromKeycode(Keys e)
         {
@@ -55,7 +112,7 @@ namespace WindowsFormsApp1
         public PowerClicker()
         {
             InitializeComponent();
-            this.MouseClick += mouseClick;
+            // this.MouseClick += mouseClick;
             RegisterHotKey(this.Handle, 0, 0, Keys.F6.GetHashCode());
         }
 
@@ -209,37 +266,39 @@ namespace WindowsFormsApp1
         }
         private void TimerIntervalChanged(object sender, EventArgs e)
         {
-            if (Convert.ToInt32(this.MinInput.Value * 1000000) + Convert.ToInt32(this.SecInput.Value * 1000) + Convert.ToInt32(this.MilsecInput.Value) < 1)
+            if (!InTimeOp)
             {
-                this.MilsecInput.Value = 1;
-            }
-            this.ClickTimer.Interval = Convert.ToInt32(this.MinInput.Value * 1000000) + Convert.ToInt32(this.SecInput.Value * 1000) + Convert.ToInt32(this.MilsecInput.Value);
-            if (Convert.ToInt32(this.MinInput.Value * 1000000) + Convert.ToInt32(this.SecInput.Value * 1000) + Convert.ToInt32(this.MilsecInput.Value) > 1)
-            {
-                this.HoldSelect.Enabled = true;
+                completeTimeOp();
 
+                this.ClickTimer.Interval = RegularTime.TotalMillis;
+                if (RegularTime.TotalMillis > 1)
+                {
+                    this.HoldSelect.Enabled = true;
+                }
+                else
+                {
+                    Console.WriteLine(RegularTime.TotalMillis);
+                    this.HoldSelect.Enabled = false;
+                    this.HoldTimerBox.Visible = false;
+                    this.InstantSelect.Checked = true;
+
+                }
+                this.Refresh();
             }
             else
-            {
-                this.HoldSelect.Enabled = false;
-                this.HoldTimerBox.Visible = false;
-                this.InstantSelect.Checked = true;
-
-            }
-            this.Refresh();
+                return;
 
         }
         private void HoldTimerIntervalChanged(object sender, EventArgs e)
         {
-            if ((Convert.ToInt32(this.HoldMinInput.Value * 1000000) + Convert.ToInt32(this.HoldSecInput.Value * 1000) + Convert.ToInt32(this.HoldMilSecInput.Value) < 1) ||
-               (Convert.ToInt32(this.HoldMinInput.Value * 1000000) + Convert.ToInt32(this.HoldSecInput.Value * 1000) + Convert.ToInt32(this.HoldMilSecInput.Value) >= (Convert.ToInt32(this.MinInput.Value * 1000000) + Convert.ToInt32(this.SecInput.Value * 1000) + Convert.ToInt32(this.MilsecInput.Value))))
+            if (!InTimeOp)
             {
-                this.HoldMinInput.Value = 0;
-                this.HoldSecInput.Value = 0;
-                this.HoldMilSecInput.Value = 1;
-                this.Refresh();
+
+                completeTimeOp();
+                this.HoldTimer.Interval = HoldTime.TotalMillis;
             }
-            this.HoldTimer.Interval = Convert.ToInt32(this.HoldMinInput.Value * 1000000) + Convert.ToInt32(this.HoldSecInput.Value * 1000) + Convert.ToInt32(this.HoldMilSecInput.Value);
+            else
+                return;
 
         }
         private void UpdateTimesDoneLabel()
@@ -350,17 +409,12 @@ namespace WindowsFormsApp1
             if (this.HoldSelect.Checked)
             {
                 this.HoldTimerBox.Visible = true;
-                int timerInterval = Convert.ToInt32(this.MinInput.Value * 1000000) + Convert.ToInt32(this.SecInput.Value * 1000) + Convert.ToInt32(this.MilsecInput.Value);
-                --timerInterval;
-                string stringtimer = timerInterval.ToString();
-                while (stringtimer.Length < 9)
-                {
-                    stringtimer = stringtimer.Insert(0, "0");
-                }
-                Console.WriteLine(stringtimer);
-                this.HoldMinInput.Value = Convert.ToInt32(stringtimer.Substring(0, 3));
-                this.HoldSecInput.Value = Convert.ToInt32(stringtimer.Substring(3, 3));
-                this.HoldMilSecInput.Value = Convert.ToInt32(stringtimer.Substring(6, 3));
+                this.HoldTime.TotalMillis = this.RegularTime.TotalMillis - 1;
+                if (!InTimeOp)
+                    requireHoldTimeInitVal=true;
+                    completeTimeOp();
+
+
 
             }
             else
@@ -386,23 +440,24 @@ namespace WindowsFormsApp1
                 this.XInput.Visible = false;
                 this.YLabel.Visible = false;
                 this.YInput.Visible = false;
-                this.CoordsButton.Visible=false;
+                this.CoordsButton.Visible = false;
             }
         }
         private void ChangeHotkeyButton_KeyDown(object sender, KeyEventArgs e)
         {
-            if (HotkeyChangeMoused && e.KeyCode!= Keys.F12)
+            if (HotkeyChangeMoused && e.KeyCode != Keys.F12)
             {
                 UnregisterHotKey(this.Handle, 0);
                 RegisterHotKey(this.Handle, 0, 0, e.KeyCode.GetHashCode());
                 this.HotKeyLabel.Text = getUnicodeFromKeycode(e.KeyCode);
-                if(this.HotKeyLabel.Text == string.Empty)
+                if (this.HotKeyLabel.Text == string.Empty)
                 {
                     this.HotKeyLabel.Text = e.KeyCode.ToString();
                 }
-            }else if(e.KeyCode == Keys.F12)
+            }
+            else if (e.KeyCode == Keys.F12)
             {
-                MessageBox.Show("F12 cannot be used as hotkey.", "Invalid Hotkey", MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show("F12 cannot be used as hotkey.", "Invalid Hotkey", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -420,5 +475,70 @@ namespace WindowsFormsApp1
             Console.WriteLine("newcoords");
             SetCoords = true;
         }
+
+
+        private class TimeHandler
+        {
+            public int MilliSeconds;
+            public int Seconds;
+            public int Minutes;
+            public int TotalMillis;
+            public TimeHandler(int Mils, int Sec, int Min)
+            {
+                this.MilliSeconds = Mils;
+                this.Seconds = Sec;
+                this.Minutes = Min;
+                this.TotalMillis = this.MilliSeconds + this.Seconds * 1000 + this.Minutes * 60000;
+                ValidateValue();
+            }
+            public void ValidateValue()
+            {
+                /* if(this.TotalMillis < 1000) {
+                     this.Minutes = 0;
+                     this.Seconds = 0;
+                     this.MilliSeconds = this.TotalMillis;
+                 } else if(this.TotalMillis < 60000){
+                     this.Minutes = 0;
+                     this.Seconds = Convert.ToInt32(this.TotalMillis.ToString().Substring(1, 2));
+                     this.MilliSeconds = this.TotalMillis - this.Seconds;
+                 }
+                 else if(this.TotalMillis%60000==0){
+                     this.Minutes = this.TotalMillis / 60000;
+                     this.Seconds = 0;
+                     this.MilliSeconds = 0;
+                 }
+                 else
+                 {*/
+                int processedMilSecs = this.TotalMillis;
+                this.Minutes = (this.TotalMillis - this.TotalMillis % 60000) / 60000;
+                processedMilSecs -= this.Minutes * 60000;
+                this.Seconds = (processedMilSecs - processedMilSecs % 1000) / 1000;
+                processedMilSecs -= this.Seconds * 1000;
+                this.MilliSeconds = processedMilSecs;
+                Console.WriteLine("Minutes: " + this.Minutes.ToString());
+                Console.WriteLine("Seconds: " + this.Seconds.ToString());
+                Console.WriteLine("MilliSeconds: " + this.MilliSeconds.ToString());
+
+                //}
+                this.TotalMillis = this.MilliSeconds + this.Seconds * 1000 + this.Minutes * 60000;
+                if (this.Minutes > 999)
+                    this.Minutes = 999;
+
+                /*  Console.WriteLine(Minutes);
+                  Console.WriteLine(Seconds);
+                  Console.WriteLine(MilliSeconds);
+                  Console.WriteLine(TotalMillis);
+
+                  Console.WriteLine("------------");
+
+                  Console.WriteLine((this.TotalMillis - this.TotalMillis % 60000) / 60000);
+                  Console.WriteLine((this.TotalMillis - this.TotalMillis % 60000));
+
+                  Console.WriteLine("__________________________");
+                */
+
+            }
+        }
+
     }
 }

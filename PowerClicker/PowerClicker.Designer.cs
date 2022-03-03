@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PowerClicker));
-            this.MilsecInput = new System.Windows.Forms.NumericUpDown();
+            this.MilSecInput = new System.Windows.Forms.NumericUpDown();
             this.MilsecLabel = new System.Windows.Forms.Label();
             this.SecInput = new System.Windows.Forms.NumericUpDown();
             this.SecLabel = new System.Windows.Forms.Label();
@@ -71,7 +71,7 @@
             this.HoldMilSecInput = new System.Windows.Forms.NumericUpDown();
             this.ChangeHotkeyButton = new System.Windows.Forms.Button();
             this.HotkeyTooltip = new System.Windows.Forms.ToolTip(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.MilsecInput)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MilSecInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SecInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CountdownTime)).BeginInit();
@@ -88,18 +88,18 @@
             ((System.ComponentModel.ISupportInitialize)(this.HoldMilSecInput)).BeginInit();
             this.SuspendLayout();
             // 
-            // MilsecInput
+            // MilSecInput
             // 
-            this.MilsecInput.Location = new System.Drawing.Point(426, 41);
-            this.MilsecInput.Maximum = new decimal(new int[] {
-            999,
+            this.MilSecInput.Location = new System.Drawing.Point(426, 41);
+            this.MilSecInput.Maximum = new decimal(new int[] {
+            1000,
             0,
             0,
             0});
-            this.MilsecInput.Name = "MilsecInput";
-            this.MilsecInput.Size = new System.Drawing.Size(120, 20);
-            this.MilsecInput.TabIndex = 0;
-            this.MilsecInput.ValueChanged += new System.EventHandler(this.TimerIntervalChanged);
+            this.MilSecInput.Name = "MilSecInput";
+            this.MilSecInput.Size = new System.Drawing.Size(120, 20);
+            this.MilSecInput.TabIndex = 0;
+            this.MilSecInput.ValueChanged += new System.EventHandler(this.TimerIntervalChanged);
             // 
             // MilsecLabel
             // 
@@ -114,7 +114,7 @@
             // 
             this.SecInput.Location = new System.Drawing.Point(242, 41);
             this.SecInput.Maximum = new decimal(new int[] {
-            999,
+            1000,
             0,
             0,
             0});
@@ -141,7 +141,7 @@
             // 
             this.MinInput.Location = new System.Drawing.Point(44, 41);
             this.MinInput.Maximum = new decimal(new int[] {
-            999,
+            1000,
             0,
             0,
             0});
@@ -266,7 +266,7 @@
             this.TimerBox.Controls.Add(this.MilsecLabel);
             this.TimerBox.Controls.Add(this.MinInput);
             this.TimerBox.Controls.Add(this.SecInput);
-            this.TimerBox.Controls.Add(this.MilsecInput);
+            this.TimerBox.Controls.Add(this.MilSecInput);
             this.TimerBox.Location = new System.Drawing.Point(15, 13);
             this.TimerBox.Name = "TimerBox";
             this.TimerBox.Size = new System.Drawing.Size(564, 76);
@@ -524,7 +524,7 @@
             // 
             this.HoldSecInput.Location = new System.Drawing.Point(242, 41);
             this.HoldSecInput.Maximum = new decimal(new int[] {
-            999,
+            59,
             0,
             0,
             0});
@@ -587,7 +587,7 @@
             this.Name = "PowerClicker";
             this.Text = "PowerClicker";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PowerClicker_FormClosing);
-            ((System.ComponentModel.ISupportInitialize)(this.MilsecInput)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MilSecInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SecInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CountdownTime)).EndInit();
@@ -614,7 +614,7 @@
 
         #endregion
 
-        private System.Windows.Forms.NumericUpDown MilsecInput;
+        private System.Windows.Forms.NumericUpDown MilSecInput;
         private System.Windows.Forms.NumericUpDown SecInput;
         private System.Windows.Forms.NumericUpDown MinInput;
         private System.Windows.Forms.NumericUpDown CountdownTime;
