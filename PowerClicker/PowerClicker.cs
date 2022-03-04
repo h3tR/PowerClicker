@@ -512,6 +512,7 @@ namespace WindowsFormsApp1
 
         private void ChangeHotkeyButton_MouseDown(object sender, MouseEventArgs e)
         {
+            toggleClicking();
             HotkeyChangeMoused = true;
         }
         private void ChangeHotkeyButton_MouseUp(object sender, EventArgs e)
@@ -539,6 +540,7 @@ namespace WindowsFormsApp1
 
         private void ChangeAutoKey_MouseDown(object sender, MouseEventArgs e)
         {
+            toggleClicking();
             AutoKeyChangeMoused = true;
         }
 
@@ -575,6 +577,5 @@ namespace WindowsFormsApp1
                     this.Minutes = 999;
             }
         }
-
     }
 }

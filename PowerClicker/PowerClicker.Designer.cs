@@ -639,7 +639,7 @@
             this.ChangeAutoKeyButton.Name = "ChangeAutoKeyButton";
             this.ChangeAutoKeyButton.Size = new System.Drawing.Size(75, 23);
             this.ChangeAutoKeyButton.TabIndex = 0;
-            this.ChangeAutoKeyButton.Text = "Change Key";
+            this.ChangeAutoKeyButton.Text = "Change AutoKey";
             this.ChangeAutoKeyButton.UseVisualStyleBackColor = true;
             this.ChangeAutoKeyButton.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ChangeAutoKey_KeyDown);
             this.ChangeAutoKeyButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ChangeAutoKey_MouseDown);
@@ -653,7 +653,7 @@
             this.VersionLabel.Name = "VersionLabel";
             this.VersionLabel.Size = new System.Drawing.Size(37, 13);
             this.VersionLabel.TabIndex = 22;
-            this.VersionLabel.Text = "v1.1.0";
+            this.VersionLabel.Text = "v1.1.1";
             // 
             // PowerClicker
             // 
