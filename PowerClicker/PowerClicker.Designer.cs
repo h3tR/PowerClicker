@@ -637,7 +637,7 @@
             // 
             this.ChangeAutoKeyButton.Location = new System.Drawing.Point(65, 9);
             this.ChangeAutoKeyButton.Name = "ChangeAutoKeyButton";
-            this.ChangeAutoKeyButton.Size = new System.Drawing.Size(75, 23);
+            this.ChangeAutoKeyButton.Size = new System.Drawing.Size(98, 23);
             this.ChangeAutoKeyButton.TabIndex = 0;
             this.ChangeAutoKeyButton.Text = "Change AutoKey";
             this.ChangeAutoKeyButton.UseVisualStyleBackColor = true;
