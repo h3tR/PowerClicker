@@ -78,6 +78,7 @@
             this.ActiveAutoKeyDisplay = new System.Windows.Forms.Label();
             this.ChangeAutoKeyButton = new System.Windows.Forms.Button();
             this.ComingSoonTip = new System.Windows.Forms.ToolTip(this.components);
+            this.VersionLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.MilSecInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SecInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinInput)).BeginInit();
@@ -645,11 +646,21 @@
             this.ChangeAutoKeyButton.MouseLeave += new System.EventHandler(this.ChangeAutoKey_MouseUp);
             this.ChangeAutoKeyButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ChangeAutoKey_MouseUp);
             // 
+            // VersionLabel
+            // 
+            this.VersionLabel.AutoSize = true;
+            this.VersionLabel.Location = new System.Drawing.Point(553, 4);
+            this.VersionLabel.Name = "VersionLabel";
+            this.VersionLabel.Size = new System.Drawing.Size(37, 13);
+            this.VersionLabel.TabIndex = 22;
+            this.VersionLabel.Text = "v1.1.0";
+            // 
             // PowerClicker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(593, 450);
+            this.Controls.Add(this.VersionLabel);
             this.Controls.Add(this.InputSelectionTabs);
             this.Controls.Add(this.ChangeHotkeyButton);
             this.Controls.Add(this.ClickTypeBox);
@@ -745,6 +756,7 @@
         private System.Windows.Forms.Label ComingSoonLabel;
         private System.Windows.Forms.Label ActiveAutoKeyDisplay;
         private System.Windows.Forms.Button ChangeAutoKeyButton;
+        private System.Windows.Forms.Label VersionLabel;
     }
 }
 
