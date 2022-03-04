@@ -10,6 +10,7 @@ namespace WindowsFormsApp1
     {
         private MouseSide HoldDisableSide;
         private bool HotkeyChangeMoused = false;
+        private bool AutoKeyChangeMoused = false;
         private bool SetCoords = false;
         private uint HoldX;
         private uint HoldY;
@@ -19,10 +20,15 @@ namespace WindowsFormsApp1
         private bool InTimeOp = false;
         // if true will set hold timer to the regular timer -1 millisecond 
         private bool requireHoldTimeInitVal = false;
+        private Keys Hotkey = Keys.F6;
+        private Keys AutoKey = Keys.E;
 
         private bool ClickingEnabled = false;
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, int dwExtraInfo);
+        [DllImport("user32.dll")]
+        private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, int dwExtraInfo);
+
+        [DllImport("user32.dll")]
+        private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
 
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
@@ -68,7 +74,7 @@ namespace WindowsFormsApp1
                     {
                         this.HoldTime.TotalMillis = this.RegularTime.TotalMillis - 1;
                         this.HoldTime.ValidateValue();
-                        requireHoldTimeInitVal=false;
+                        requireHoldTimeInitVal = false;
                     }
 
                     if (this.HoldTime.TotalMillis < 1)
@@ -93,6 +99,15 @@ namespace WindowsFormsApp1
             }
         }
         // Generates string from given keycode
+        private string getStringfromKeycode(Keys e)
+        {
+            string toreturn = getUnicodeFromKeycode(e);
+            if (toreturn == string.Empty|| toreturn == " ")
+            {
+                toreturn = e.ToString();
+            }
+            return toreturn;
+        }
         private string getUnicodeFromKeycode(Keys e)
         {
             StringBuilder charPressed = new StringBuilder(256);
@@ -130,87 +145,88 @@ namespace WindowsFormsApp1
         // simulates a mouseclick at a given position according to the given MouseSide Enum value
         private void DoMouseClickAt(uint X, uint Y, MouseSide Side)
         {
-            if (Side == MouseSide.LEFT)
+            switch (Side)
             {
-                mouse_event(0x02/*LeftMouseDown*/, X, Y, 0, 0);
-                if (this.HoldSelect.Checked)
-                {
-                    this.HoldTimer.Start();
-                    HoldDisableSide = Side;
-                    HoldX = X;
-                    HoldY = Y;
-                }
-                else
-                {
-                    mouse_event(0x04/*leftMouseUp*/, X, Y, 0, 0);
-                }
-            }
-            else if (Side == MouseSide.RIGHT)
-            {
-                mouse_event(0x08/*RightMouseDown*/, X, Y, 0, 0);
-                if (this.HoldSelect.Checked)
-                {
-                    this.HoldTimer.Start();
-                    HoldDisableSide = Side;
-                    HoldX = X;
-                    HoldY = Y;
-                }
-                else
-                {
-                    mouse_event(0x10/*RightMouseUp*/, X, Y, 0, 0);
-                }
-            }
-            else if (Side == MouseSide.BOTH)
-            {
+                case MouseSide.LEFT:
 
-                mouse_event(0x02/*LeftMouseDown*/, X, Y, 0, 0);
-                mouse_event(0x08/*RightMouseDown*/, X, Y, 0, 0);
-                if (this.HoldSelect.Checked)
-                {
-                    this.HoldTimer.Start();
-                    HoldDisableSide = Side;
-                    HoldX = X;
-                    HoldY = Y;
-                }
-                else
-                {
-                    mouse_event(0x04/*leftMouseUp*/, X, Y, 0, 0);
-                    mouse_event(0x10/*RightMouseUp*/, X, Y, 0, 0);
-                }
-            }
-            else if (Side == MouseSide.MIDDLE)
-            {
-                mouse_event(0x20/*MiddleMouseDown*/, X, Y, 0, 0);
-                if (this.HoldSelect.Checked)
-                {
-                    this.HoldTimer.Start();
-                    HoldDisableSide = Side;
-                    HoldX = X;
-                    HoldY = Y;
-                }
-                else
-                {
-                    mouse_event(0x40/*MiddleMouseUp*/, X, Y, 0, 0);
-                }
-            }
-            else if (Side == MouseSide.ALL)
-            {
-                mouse_event(0x20/*MiddleMouseDown*/, X, Y, 0, 0);
-                mouse_event(0x02/*LeftMouseDown*/, X, Y, 0, 0);
-                mouse_event(0x08/*RightMouseDown*/, X, Y, 0, 0);
-                if (this.HoldSelect.Checked)
-                {
-                    this.HoldTimer.Start();
-                    HoldDisableSide = Side;
-                    HoldX = X;
-                    HoldY = Y;
-                }
-                else
-                {
-                    mouse_event(0x40/*MiddleMouseUp*/, X, Y, 0, 0);
-                    mouse_event(0x04/*leftMouseUp*/, X, Y, 0, 0);
-                    mouse_event(0x10/*RightMouseUp*/, X, Y, 0, 0);
-                }
+                    mouse_event(Convert.ToUInt32(0x02)/*LeftMouseDown*/, X, Y, 0, 0);
+                    if (this.HoldSelect.Checked)
+                    {
+                        this.HoldTimer.Start();
+                        HoldDisableSide = Side;
+                        HoldX = X;
+                        HoldY = Y;
+                    }
+                    else
+                    {
+                        mouse_event(Convert.ToUInt32(0x04)/*leftMouseUp*/, X, Y, 0, 0);
+                    }
+                    break;
+                case MouseSide.RIGHT:
+                    mouse_event(Convert.ToUInt32(0x08)/*RightMouseDown*/, X, Y, 0, 0);
+                    if (this.HoldSelect.Checked)
+                    {
+                        this.HoldTimer.Start();
+                        HoldDisableSide = Side;
+                        HoldX = X;
+                        HoldY = Y;
+                    }
+                    else
+                    {
+                        mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, X, Y, 0, 0);
+                    }
+                    break;
+                case MouseSide.BOTH:
+                    mouse_event(Convert.ToUInt32(0x02)/*LeftMouseDown*/, X, Y, 0, 0);
+                    mouse_event(Convert.ToUInt32(0x08)/*RightMouseDown*/, X, Y, 0, 0);
+                    if (this.HoldSelect.Checked)
+                    {
+                        this.HoldTimer.Start();
+                        HoldDisableSide = Side;
+                        HoldX = X;
+                        HoldY = Y;
+                    }
+                    else
+                    {
+                        mouse_event(Convert.ToUInt32(0x04)/*leftMouseUp*/, X, Y, 0, 0);
+                        mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, X, Y, 0, 0);
+                    }
+                    break;
+                case MouseSide.MIDDLE:
+                    mouse_event(Convert.ToUInt32(0x20)/*MiddleMouseDown*/, X, Y, 0, 0);
+                    if (this.HoldSelect.Checked)
+                    {
+                        this.HoldTimer.Start();
+                        HoldDisableSide = Side;
+                        HoldX = X;
+                        HoldY = Y;
+                    }
+                    else
+                    {
+                        mouse_event(Convert.ToUInt32(0x40)/*MiddleMouseUp*/, X, Y, 0, 0);
+                    }
+                    break;
+                case MouseSide.ALL:
+                    mouse_event(Convert.ToUInt32(0x20)/*MiddleMouseDown*/, X, Y, 0, 0);
+                    mouse_event(Convert.ToUInt32(0x02)/*LeftMouseDown*/, X, Y, 0, 0);
+                    mouse_event(Convert.ToUInt32(0x08)/*RightMouseDown*/, X, Y, 0, 0);
+                    if (this.HoldSelect.Checked)
+                    {
+                        this.HoldTimer.Start();
+                        HoldDisableSide = Side;
+                        HoldX = X;
+                        HoldY = Y;
+                    }
+                    else
+                    {
+                        mouse_event(Convert.ToUInt32(0x40)/*MiddleMouseUp*/, X, Y, 0, 0);
+                        mouse_event(Convert.ToUInt32(0x04)/*leftMouseUp*/, X, Y, 0, 0);
+                        mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, X, Y, 0, 0);
+                    }
+                    break;
+                default:
+                    Console.WriteLine("Warning: No Mousebutton has been selected.");
+                    break;
             }
         }
         // Simulates a mouseclick at the current position of the cursor
@@ -324,71 +340,92 @@ namespace WindowsFormsApp1
 
                 if (this.ClickingEnabled)
                 {
-                    MouseSide Side = MouseSide.LEFT;
-#pragma warning disable CS0252 // Possible unintended reference comparison; left hand side needs cast
-                    if (this.MousebuttonDropdown.SelectedItem == "Left")
+                    if (this.InputSelectionTabs.SelectedTab == this.MousePage)
                     {
-                        Side = MouseSide.LEFT;
-                    }
-                    else if (this.MousebuttonDropdown.SelectedItem == "Right")
-                    {
-                        Side = MouseSide.RIGHT;
-                    }
-                    else if (this.MousebuttonDropdown.SelectedItem == "Both")
-                    {
-                        Side = MouseSide.BOTH;
-                    }
-                    else if (this.MousebuttonDropdown.SelectedItem == "Middle")
-                    {
-                        Side = MouseSide.MIDDLE;
-                    }
-                    else if (this.MousebuttonDropdown.SelectedItem == "All")
-                    {
-                        Side = MouseSide.ALL;
-                    }
-#pragma warning restore CS0252 // Possible unintended reference comparison; left hand side needs cast
-                    timesdone++;
-                    if (this.CoordinatesSelect.Checked)
-                    {
-                        DoMouseClickAt(Convert.ToUInt32(this.XInput.Value), Convert.ToUInt32(this.YInput.Value), Side);
+                        MouseSide Side = MouseSide.LEFT;
+                        switch (this.MousebuttonDropdown.SelectedItem)
+                        {
+                            case "Left":
+                                Side = MouseSide.LEFT;
+                                break;
+                            case "Right":
+                                Side = MouseSide.RIGHT;
+                                break;
+                            case "Middle":
+                                Side = MouseSide.MIDDLE;
+                                break;
+                            case "Both":
+                                Side = MouseSide.BOTH;
+                                break;
+                            case "All":
+                                Side = MouseSide.ALL;
+                                break;
+                            default:
+                                Console.WriteLine("Warning: Invalid MouseButton input given.");
+                                break;
+                        }
+                        timesdone++;
+                        if (this.CoordinatesSelect.Checked)
+                        {
+                            DoMouseClickAt(Convert.ToUInt32(this.XInput.Value), Convert.ToUInt32(this.YInput.Value), Side);
+                        }
+                        else
+                        {
+                            DoMouseClickAtCursor(Side);
+                        }
+                        UpdateTimesDoneLabel();
+                        this.Refresh();
                     }
                     else
                     {
-                        DoMouseClickAtCursor(Side);
+                        keybd_event((byte)AutoKey, 0, 0, 0);
+                        if (this.HoldSelect.Checked)
+                        {
+                            this.HoldTimer.Start();
+                        }
+                        else
+                        {
+                            keybd_event((byte)AutoKey, 0, 0x0002, 0);
+                        }
+                        timesdone++;
+                        UpdateTimesDoneLabel();
+                        this.Refresh();
                     }
-                    UpdateTimesDoneLabel();
-                    this.Refresh();
                 }
             }
         }
 
         private void HoldTimerTick(object sender, EventArgs e)
         {
-
-            if (HoldDisableSide == MouseSide.LEFT)
+            if (this.InputSelectionTabs.SelectedTab == this.MousePage)
             {
-
-                mouse_event(0x04/*leftMouseUp*/, HoldX, HoldY, 0, 0);
+                switch (HoldDisableSide)
+                {
+                    case MouseSide.LEFT:
+                        mouse_event(Convert.ToUInt32(0x04)/*leftMouseUp*/, HoldX, HoldY, 0, 0);
+                        break;
+                    case MouseSide.RIGHT:
+                        mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, HoldX, HoldY, 0, 0);
+                        break;
+                    case MouseSide.MIDDLE:
+                        mouse_event(Convert.ToUInt32(0x40)/*MiddleMouseUp*/, HoldX, HoldY, 0, 0);
+                        break;
+                    case MouseSide.BOTH:
+                        mouse_event(Convert.ToUInt32(0x04)/*leftMouseUp*/, HoldX, HoldY, 0, 0);
+                        mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, HoldX, HoldY, 0, 0);
+                        break;
+                    case MouseSide.ALL:
+                        mouse_event(Convert.ToUInt32(0x40)/*MiddleMouseUp*/, HoldX, HoldY, 0, 0);
+                        mouse_event(Convert.ToUInt32(0x04)/*leftMouseUp*/, HoldX, HoldY, 0, 0);
+                        mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, HoldX, HoldY, 0, 0);
+                        break;
+                    default:
+                        Console.WriteLine("Warning: Invalid HoldDisableSide Value.");
+                        break;
+                }
             }
-            else if (HoldDisableSide == MouseSide.RIGHT)
-            {
-                mouse_event(0x10/*RightMouseUp*/, HoldX, HoldY, 0, 0);
-            }
-            else if (HoldDisableSide == MouseSide.BOTH)
-            {
-                mouse_event(0x04/*leftMouseUp*/, HoldX, HoldY, 0, 0);
-                mouse_event(0x10/*RightMouseUp*/, HoldX, HoldY, 0, 0);
-            }
-            else if (HoldDisableSide == MouseSide.MIDDLE)
-            {
-                mouse_event(0x40/*MiddleMouseUp*/, HoldX, HoldY, 0, 0);
-            }
-            else if (HoldDisableSide == MouseSide.ALL)
-            {
-                mouse_event(0x40/*MiddleMouseUp*/, HoldX, HoldY, 0, 0);
-                mouse_event(0x04/*leftMouseUp*/, HoldX, HoldY, 0, 0);
-                mouse_event(0x10/*RightMouseUp*/, HoldX, HoldY, 0, 0);
-            }
+            else
+                keybd_event((byte)AutoKey, 0, 0x0002, 0);
             this.HoldTimer.Stop();
         }
 
@@ -413,8 +450,8 @@ namespace WindowsFormsApp1
                 this.HoldTimerBox.Visible = true;
                 this.HoldTime.TotalMillis = this.RegularTime.TotalMillis - 1;
                 if (!InTimeOp)
-                    requireHoldTimeInitVal=true;
-                    completeTimeOp();
+                    requireHoldTimeInitVal = true;
+                completeTimeOp();
 
 
 
@@ -451,15 +488,25 @@ namespace WindowsFormsApp1
             {
                 UnregisterHotKey(this.Handle, 0);
                 RegisterHotKey(this.Handle, 0, 0, e.KeyCode.GetHashCode());
-                this.HotKeyLabel.Text = getUnicodeFromKeycode(e.KeyCode);
-                if (this.HotKeyLabel.Text == string.Empty)
-                {
-                    this.HotKeyLabel.Text = e.KeyCode.ToString();
-                }
+                Hotkey = e.KeyCode;
+                this.HotKeyLabel.Text = getStringfromKeycode(e.KeyCode);
             }
             else if (e.KeyCode == Keys.F12)
             {
                 MessageBox.Show("F12 cannot be used as hotkey.", "Invalid Hotkey", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            if (Hotkey == AutoKey)
+            {
+                if (Hotkey != Keys.E)
+                {
+                    AutoKey = Keys.E;
+                    this.ActiveAutoKeyDisplay.Text = getStringfromKeycode(Keys.E);
+                }
+                else
+                {
+                    AutoKey = Keys.A;
+                    this.ActiveAutoKeyDisplay.Text = getStringfromKeycode(Keys.A);
+                }
             }
         }
 
@@ -477,6 +524,28 @@ namespace WindowsFormsApp1
             SetCoords = true;
         }
 
+        private void ChangeAutoKey_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (AutoKeyChangeMoused && e.KeyCode != Hotkey)
+            {
+                AutoKey = e.KeyCode;
+                this.ActiveAutoKeyDisplay.Text = getStringfromKeycode(e.KeyCode);
+            }
+            else if (e.KeyCode == Hotkey)
+            {
+                MessageBox.Show("The AutoKey cannot be the same as your hotkey", "Invalid AutoKey", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ChangeAutoKey_MouseDown(object sender, MouseEventArgs e)
+        {
+            AutoKeyChangeMoused = true;
+        }
+
+        private void ChangeAutoKey_MouseUp(object sender, EventArgs e)
+        {
+            AutoKeyChangeMoused = false;
+        }
 
         private class TimeHandler
         {
@@ -503,7 +572,7 @@ namespace WindowsFormsApp1
 
                 this.TotalMillis = this.MilliSeconds + this.Seconds * 1000 + this.Minutes * 60000;
                 if (this.Minutes > 999)
-                    this.Minutes = 999; 
+                    this.Minutes = 999;
             }
         }
 

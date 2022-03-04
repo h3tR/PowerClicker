@@ -48,6 +48,7 @@
             this.TimerBox = new System.Windows.Forms.GroupBox();
             this.HotKeyLabel = new System.Windows.Forms.Label();
             this.CursorPosition = new System.Windows.Forms.GroupBox();
+            this.ComingSoonLabel = new System.Windows.Forms.Label();
             this.CoordsButton = new System.Windows.Forms.Button();
             this.CursorSelect = new System.Windows.Forms.RadioButton();
             this.CoordinatesSelect = new System.Windows.Forms.RadioButton();
@@ -71,6 +72,12 @@
             this.HoldMilSecInput = new System.Windows.Forms.NumericUpDown();
             this.ChangeHotkeyButton = new System.Windows.Forms.Button();
             this.HotkeyTooltip = new System.Windows.Forms.ToolTip(this.components);
+            this.InputSelectionTabs = new System.Windows.Forms.TabControl();
+            this.MousePage = new System.Windows.Forms.TabPage();
+            this.KeyboardPage = new System.Windows.Forms.TabPage();
+            this.ActiveAutoKeyDisplay = new System.Windows.Forms.Label();
+            this.ChangeAutoKeyButton = new System.Windows.Forms.Button();
+            this.ComingSoonTip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.MilSecInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SecInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinInput)).BeginInit();
@@ -86,6 +93,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.HoldMinInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HoldSecInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HoldMilSecInput)).BeginInit();
+            this.InputSelectionTabs.SuspendLayout();
+            this.MousePage.SuspendLayout();
+            this.KeyboardPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // MilSecInput
@@ -161,7 +171,7 @@
             // 
             // EnabledToggle
             // 
-            this.EnabledToggle.Location = new System.Drawing.Point(44, 202);
+            this.EnabledToggle.Location = new System.Drawing.Point(44, 95);
             this.EnabledToggle.Name = "EnabledToggle";
             this.EnabledToggle.Size = new System.Drawing.Size(75, 23);
             this.EnabledToggle.TabIndex = 6;
@@ -172,7 +182,7 @@
             // CountdownTime
             // 
             this.CountdownTime.DecimalPlaces = 1;
-            this.CountdownTime.Location = new System.Drawing.Point(141, 202);
+            this.CountdownTime.Location = new System.Drawing.Point(383, 95);
             this.CountdownTime.Maximum = new decimal(new int[] {
             60000,
             0,
@@ -185,7 +195,7 @@
             // CountdownLabel
             // 
             this.CountdownLabel.AutoSize = true;
-            this.CountdownLabel.Location = new System.Drawing.Point(138, 176);
+            this.CountdownLabel.Location = new System.Drawing.Point(290, 99);
             this.CountdownLabel.Name = "CountdownLabel";
             this.CountdownLabel.Size = new System.Drawing.Size(87, 13);
             this.CountdownLabel.TabIndex = 8;
@@ -196,7 +206,7 @@
             this.Countdown.AutoSize = true;
             this.Countdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Countdown.ForeColor = System.Drawing.Color.Red;
-            this.Countdown.Location = new System.Drawing.Point(279, 198);
+            this.Countdown.Location = new System.Drawing.Point(521, 95);
             this.Countdown.Name = "Countdown";
             this.Countdown.Size = new System.Drawing.Size(24, 25);
             this.Countdown.TabIndex = 9;
@@ -218,9 +228,9 @@
             this.ClickTypeBox.Controls.Add(this.RepeatSelect);
             this.ClickTypeBox.Controls.Add(this.TimesSelect);
             this.ClickTypeBox.Controls.Add(this.TimesInput);
-            this.ClickTypeBox.Location = new System.Drawing.Point(284, 244);
+            this.ClickTypeBox.Location = new System.Drawing.Point(12, 275);
             this.ClickTypeBox.Name = "ClickTypeBox";
-            this.ClickTypeBox.Size = new System.Drawing.Size(290, 83);
+            this.ClickTypeBox.Size = new System.Drawing.Size(242, 82);
             this.ClickTypeBox.TabIndex = 11;
             this.ClickTypeBox.TabStop = false;
             this.ClickTypeBox.Text = "Click Type";
@@ -278,7 +288,7 @@
             // 
             this.HotKeyLabel.AutoSize = true;
             this.HotKeyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HotKeyLabel.Location = new System.Drawing.Point(12, 205);
+            this.HotKeyLabel.Location = new System.Drawing.Point(12, 95);
             this.HotKeyLabel.Name = "HotKeyLabel";
             this.HotKeyLabel.Size = new System.Drawing.Size(26, 17);
             this.HotKeyLabel.TabIndex = 14;
@@ -286,6 +296,7 @@
             // 
             // CursorPosition
             // 
+            this.CursorPosition.Controls.Add(this.ComingSoonLabel);
             this.CursorPosition.Controls.Add(this.CoordsButton);
             this.CursorPosition.Controls.Add(this.CursorSelect);
             this.CursorPosition.Controls.Add(this.CoordinatesSelect);
@@ -293,17 +304,26 @@
             this.CursorPosition.Controls.Add(this.XInput);
             this.CursorPosition.Controls.Add(this.YLabel);
             this.CursorPosition.Controls.Add(this.XLabel);
-            this.CursorPosition.Location = new System.Drawing.Point(585, 240);
+            this.CursorPosition.Location = new System.Drawing.Point(241, 12);
             this.CursorPosition.Name = "CursorPosition";
-            this.CursorPosition.Size = new System.Drawing.Size(255, 117);
+            this.CursorPosition.Size = new System.Drawing.Size(304, 97);
             this.CursorPosition.TabIndex = 15;
             this.CursorPosition.TabStop = false;
             this.CursorPosition.Text = "Position";
-            this.CursorPosition.Visible = false;
+            // 
+            // ComingSoonLabel
+            // 
+            this.ComingSoonLabel.AutoSize = true;
+            this.ComingSoonLabel.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.ComingSoonLabel.Location = new System.Drawing.Point(14, 70);
+            this.ComingSoonLabel.Name = "ComingSoonLabel";
+            this.ComingSoonLabel.Size = new System.Drawing.Size(79, 13);
+            this.ComingSoonLabel.TabIndex = 7;
+            this.ComingSoonLabel.Text = "↑ Coming Soon";
             // 
             // CoordsButton
             // 
-            this.CoordsButton.Location = new System.Drawing.Point(117, 88);
+            this.CoordsButton.Location = new System.Drawing.Point(150, 65);
             this.CoordsButton.Name = "CoordsButton";
             this.CoordsButton.Size = new System.Drawing.Size(105, 23);
             this.CoordsButton.TabIndex = 6;
@@ -327,17 +347,19 @@
             // CoordinatesSelect
             // 
             this.CoordinatesSelect.AutoSize = true;
+            this.CoordinatesSelect.Enabled = false;
             this.CoordinatesSelect.Location = new System.Drawing.Point(6, 42);
             this.CoordinatesSelect.Name = "CoordinatesSelect";
             this.CoordinatesSelect.Size = new System.Drawing.Size(81, 17);
             this.CoordinatesSelect.TabIndex = 4;
             this.CoordinatesSelect.Text = "Coordinates";
+            this.ComingSoonTip.SetToolTip(this.CoordinatesSelect, "Coming soon");
             this.CoordinatesSelect.UseVisualStyleBackColor = true;
             this.CoordinatesSelect.CheckedChanged += new System.EventHandler(this.CoordinatesSelect_CheckedChanged);
             // 
             // YInput
             // 
-            this.YInput.Location = new System.Drawing.Point(117, 55);
+            this.YInput.Location = new System.Drawing.Point(150, 39);
             this.YInput.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -355,7 +377,7 @@
             // 
             // XInput
             // 
-            this.XInput.Location = new System.Drawing.Point(117, 27);
+            this.XInput.Location = new System.Drawing.Point(150, 11);
             this.XInput.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -379,7 +401,7 @@
             // YLabel
             // 
             this.YLabel.AutoSize = true;
-            this.YLabel.Location = new System.Drawing.Point(97, 57);
+            this.YLabel.Location = new System.Drawing.Point(123, 44);
             this.YLabel.Name = "YLabel";
             this.YLabel.Size = new System.Drawing.Size(14, 13);
             this.YLabel.TabIndex = 1;
@@ -389,7 +411,7 @@
             // XLabel
             // 
             this.XLabel.AutoSize = true;
-            this.XLabel.Location = new System.Drawing.Point(97, 29);
+            this.XLabel.Location = new System.Drawing.Point(123, 13);
             this.XLabel.Name = "XLabel";
             this.XLabel.Size = new System.Drawing.Size(14, 13);
             this.XLabel.TabIndex = 0;
@@ -416,7 +438,7 @@
             "Both",
             "Middle",
             "All"});
-            this.MousebuttonDropdown.Location = new System.Drawing.Point(424, 198);
+            this.MousebuttonDropdown.Location = new System.Drawing.Point(103, 14);
             this.MousebuttonDropdown.Name = "MousebuttonDropdown";
             this.MousebuttonDropdown.Size = new System.Drawing.Size(121, 21);
             this.MousebuttonDropdown.TabIndex = 16;
@@ -424,7 +446,7 @@
             // ClickTypeLabel
             // 
             this.ClickTypeLabel.AutoSize = true;
-            this.ClickTypeLabel.Location = new System.Drawing.Point(346, 204);
+            this.ClickTypeLabel.Location = new System.Drawing.Point(25, 17);
             this.ClickTypeLabel.Name = "ClickTypeLabel";
             this.ClickTypeLabel.Size = new System.Drawing.Size(72, 13);
             this.ClickTypeLabel.TabIndex = 17;
@@ -434,9 +456,9 @@
             // 
             this.ClickDurationBox.Controls.Add(this.HoldSelect);
             this.ClickDurationBox.Controls.Add(this.InstantSelect);
-            this.ClickDurationBox.Location = new System.Drawing.Point(15, 240);
+            this.ClickDurationBox.Location = new System.Drawing.Point(333, 275);
             this.ClickDurationBox.Name = "ClickDurationBox";
-            this.ClickDurationBox.Size = new System.Drawing.Size(246, 87);
+            this.ClickDurationBox.Size = new System.Drawing.Size(246, 82);
             this.ClickDurationBox.TabIndex = 18;
             this.ClickDurationBox.TabStop = false;
             this.ClickDurationBox.Text = "Click duration";
@@ -444,7 +466,7 @@
             // HoldSelect
             // 
             this.HoldSelect.AutoSize = true;
-            this.HoldSelect.Location = new System.Drawing.Point(17, 57);
+            this.HoldSelect.Location = new System.Drawing.Point(17, 45);
             this.HoldSelect.Name = "HoldSelect";
             this.HoldSelect.Size = new System.Drawing.Size(47, 17);
             this.HoldSelect.TabIndex = 1;
@@ -456,7 +478,7 @@
             // 
             this.InstantSelect.AutoSize = true;
             this.InstantSelect.Checked = true;
-            this.InstantSelect.Location = new System.Drawing.Point(17, 27);
+            this.InstantSelect.Location = new System.Drawing.Point(17, 19);
             this.InstantSelect.Name = "InstantSelect";
             this.InstantSelect.Size = new System.Drawing.Size(57, 17);
             this.InstantSelect.TabIndex = 0;
@@ -553,7 +575,7 @@
             // 
             // ChangeHotkeyButton
             // 
-            this.ChangeHotkeyButton.Location = new System.Drawing.Point(141, 140);
+            this.ChangeHotkeyButton.Location = new System.Drawing.Point(141, 95);
             this.ChangeHotkeyButton.Name = "ChangeHotkeyButton";
             this.ChangeHotkeyButton.Size = new System.Drawing.Size(119, 23);
             this.ChangeHotkeyButton.TabIndex = 20;
@@ -565,20 +587,76 @@
             this.ChangeHotkeyButton.MouseLeave += new System.EventHandler(this.ChangeHotkeyButton_MouseUp);
             this.ChangeHotkeyButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ChangeHotkeyButton_MouseUp);
             // 
+            // InputSelectionTabs
+            // 
+            this.InputSelectionTabs.Controls.Add(this.MousePage);
+            this.InputSelectionTabs.Controls.Add(this.KeyboardPage);
+            this.InputSelectionTabs.Location = new System.Drawing.Point(12, 124);
+            this.InputSelectionTabs.Name = "InputSelectionTabs";
+            this.InputSelectionTabs.SelectedIndex = 0;
+            this.InputSelectionTabs.Size = new System.Drawing.Size(567, 142);
+            this.InputSelectionTabs.TabIndex = 21;
+            // 
+            // MousePage
+            // 
+            this.MousePage.Controls.Add(this.ClickTypeLabel);
+            this.MousePage.Controls.Add(this.MousebuttonDropdown);
+            this.MousePage.Controls.Add(this.CursorPosition);
+            this.MousePage.Location = new System.Drawing.Point(4, 22);
+            this.MousePage.Name = "MousePage";
+            this.MousePage.Padding = new System.Windows.Forms.Padding(3);
+            this.MousePage.Size = new System.Drawing.Size(559, 116);
+            this.MousePage.TabIndex = 0;
+            this.MousePage.Text = "Mouse";
+            this.MousePage.UseVisualStyleBackColor = true;
+            // 
+            // KeyboardPage
+            // 
+            this.KeyboardPage.Controls.Add(this.ActiveAutoKeyDisplay);
+            this.KeyboardPage.Controls.Add(this.ChangeAutoKeyButton);
+            this.KeyboardPage.Location = new System.Drawing.Point(4, 22);
+            this.KeyboardPage.Name = "KeyboardPage";
+            this.KeyboardPage.Padding = new System.Windows.Forms.Padding(3);
+            this.KeyboardPage.Size = new System.Drawing.Size(559, 116);
+            this.KeyboardPage.TabIndex = 1;
+            this.KeyboardPage.Text = "Keyboard";
+            this.KeyboardPage.UseVisualStyleBackColor = true;
+            // 
+            // ActiveAutoKeyDisplay
+            // 
+            this.ActiveAutoKeyDisplay.AutoSize = true;
+            this.ActiveAutoKeyDisplay.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ActiveAutoKeyDisplay.Location = new System.Drawing.Point(11, 9);
+            this.ActiveAutoKeyDisplay.Name = "ActiveAutoKeyDisplay";
+            this.ActiveAutoKeyDisplay.Size = new System.Drawing.Size(18, 17);
+            this.ActiveAutoKeyDisplay.TabIndex = 15;
+            this.ActiveAutoKeyDisplay.Text = "E";
+            // 
+            // ChangeAutoKeyButton
+            // 
+            this.ChangeAutoKeyButton.Location = new System.Drawing.Point(65, 9);
+            this.ChangeAutoKeyButton.Name = "ChangeAutoKeyButton";
+            this.ChangeAutoKeyButton.Size = new System.Drawing.Size(75, 23);
+            this.ChangeAutoKeyButton.TabIndex = 0;
+            this.ChangeAutoKeyButton.Text = "Change Key";
+            this.ChangeAutoKeyButton.UseVisualStyleBackColor = true;
+            this.ChangeAutoKeyButton.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ChangeAutoKey_KeyDown);
+            this.ChangeAutoKeyButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ChangeAutoKey_MouseDown);
+            this.ChangeAutoKeyButton.MouseLeave += new System.EventHandler(this.ChangeAutoKey_MouseUp);
+            this.ChangeAutoKeyButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ChangeAutoKey_MouseUp);
+            // 
             // PowerClicker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(586, 450);
+            this.ClientSize = new System.Drawing.Size(593, 450);
+            this.Controls.Add(this.InputSelectionTabs);
             this.Controls.Add(this.ChangeHotkeyButton);
+            this.Controls.Add(this.ClickTypeBox);
             this.Controls.Add(this.HoldTimerBox);
             this.Controls.Add(this.ClickDurationBox);
-            this.Controls.Add(this.ClickTypeLabel);
-            this.Controls.Add(this.MousebuttonDropdown);
-            this.Controls.Add(this.CursorPosition);
             this.Controls.Add(this.HotKeyLabel);
             this.Controls.Add(this.TimerBox);
-            this.Controls.Add(this.ClickTypeBox);
             this.Controls.Add(this.Countdown);
             this.Controls.Add(this.CountdownLabel);
             this.Controls.Add(this.CountdownTime);
@@ -607,6 +685,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.HoldMinInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.HoldSecInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.HoldMilSecInput)).EndInit();
+            this.InputSelectionTabs.ResumeLayout(false);
+            this.MousePage.ResumeLayout(false);
+            this.MousePage.PerformLayout();
+            this.KeyboardPage.ResumeLayout(false);
+            this.KeyboardPage.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -655,6 +738,13 @@
         private System.Windows.Forms.Button ChangeHotkeyButton;
         private System.Windows.Forms.ToolTip HotkeyTooltip;
         private System.Windows.Forms.Button CoordsButton;
+        private System.Windows.Forms.TabControl InputSelectionTabs;
+        private System.Windows.Forms.TabPage MousePage;
+        private System.Windows.Forms.TabPage KeyboardPage;
+        private System.Windows.Forms.ToolTip ComingSoonTip;
+        private System.Windows.Forms.Label ComingSoonLabel;
+        private System.Windows.Forms.Label ActiveAutoKeyDisplay;
+        private System.Windows.Forms.Button ChangeAutoKeyButton;
     }
 }
 
