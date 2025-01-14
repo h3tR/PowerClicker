@@ -585,8 +585,6 @@
             this.ChangeHotkeyButton.UseVisualStyleBackColor = true;
             this.ChangeHotkeyButton.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ChangeHotkeyButton_KeyDown);
             this.ChangeHotkeyButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ChangeHotkeyButton_MouseDown);
-            this.ChangeHotkeyButton.MouseLeave += new System.EventHandler(this.ChangeHotkeyButton_MouseUp);
-            this.ChangeHotkeyButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ChangeHotkeyButton_MouseUp);
             // 
             // InputSelectionTabs
             // 
@@ -643,8 +641,6 @@
             this.ChangeAutoKeyButton.UseVisualStyleBackColor = true;
             this.ChangeAutoKeyButton.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ChangeAutoKey_KeyDown);
             this.ChangeAutoKeyButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ChangeAutoKey_MouseDown);
-            this.ChangeAutoKeyButton.MouseLeave += new System.EventHandler(this.ChangeAutoKey_MouseUp);
-            this.ChangeAutoKeyButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ChangeAutoKey_MouseUp);
             // 
             // VersionLabel
             // 
@@ -653,7 +649,7 @@
             this.VersionLabel.Name = "VersionLabel";
             this.VersionLabel.Size = new System.Drawing.Size(37, 13);
             this.VersionLabel.TabIndex = 22;
-            this.VersionLabel.Text = "v1.1.1";
+            this.VersionLabel.Text = "v1.2.0";
             // 
             // PowerClicker
             // 

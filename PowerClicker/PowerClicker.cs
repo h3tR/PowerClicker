@@ -37,6 +37,15 @@ namespace WindowsFormsApp1
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int ToUnicode(uint virtualKeyCode, uint scanCode, byte[] keyboardState, System.Text.StringBuilder receivingBuffer, int bufferSize, uint flags);
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool AllocConsole();
+
+        private static readonly uint KEYEVENTF_EXTENDEDKEY = 0x0001;
+        private static readonly uint KEYEVENTF_KEYUP = 0x0002;
+        private static readonly uint WM_HOTKEY = 0x0312;
+
+
         private int timesdone = 0;
         enum MouseSide
         {
@@ -124,9 +133,10 @@ namespace WindowsFormsApp1
 
             }
         }
-        //constructor, Duh!
+
         public PowerClicker()
         {
+           // AllocConsole();
             InitializeComponent();
             // this.MouseClick += mouseClick;
             RegisterHotKey(this.Handle, 0, 0, Keys.F6.GetHashCode());
@@ -136,11 +146,9 @@ namespace WindowsFormsApp1
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
-
-            if (m.Msg == 0x0312)
-            {
+            if (m.Msg == WM_HOTKEY) 
                 toggleClicking();
-            }
+            
         }
         // simulates a mouseclick at a given position according to the given MouseSide Enum value
         private void DoMouseClickAt(uint X, uint Y, MouseSide Side)
@@ -148,86 +156,58 @@ namespace WindowsFormsApp1
             switch (Side)
             {
                 case MouseSide.LEFT:
-
                     mouse_event(Convert.ToUInt32(0x02)/*LeftMouseDown*/, X, Y, 0, 0);
-                    if (this.HoldSelect.Checked)
-                    {
-                        this.HoldTimer.Start();
-                        HoldDisableSide = Side;
-                        HoldX = X;
-                        HoldY = Y;
-                    }
-                    else
+                    if (!this.HoldSelect.Checked) 
                     {
                         mouse_event(Convert.ToUInt32(0x04)/*leftMouseUp*/, X, Y, 0, 0);
+                        return;
                     }
                     break;
                 case MouseSide.RIGHT:
                     mouse_event(Convert.ToUInt32(0x08)/*RightMouseDown*/, X, Y, 0, 0);
-                    if (this.HoldSelect.Checked)
-                    {
-                        this.HoldTimer.Start();
-                        HoldDisableSide = Side;
-                        HoldX = X;
-                        HoldY = Y;
-                    }
-                    else
+                    if (!this.HoldSelect.Checked)
                     {
                         mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, X, Y, 0, 0);
+                        return;
                     }
                     break;
                 case MouseSide.BOTH:
                     mouse_event(Convert.ToUInt32(0x02)/*LeftMouseDown*/, X, Y, 0, 0);
                     mouse_event(Convert.ToUInt32(0x08)/*RightMouseDown*/, X, Y, 0, 0);
-                    if (this.HoldSelect.Checked)
-                    {
-                        this.HoldTimer.Start();
-                        HoldDisableSide = Side;
-                        HoldX = X;
-                        HoldY = Y;
-                    }
-                    else
+                    if (!this.HoldSelect.Checked)
                     {
                         mouse_event(Convert.ToUInt32(0x04)/*leftMouseUp*/, X, Y, 0, 0);
-                        mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, X, Y, 0, 0);
+                        mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, X, Y, 0, 0); 
+                        return;
                     }
                     break;
                 case MouseSide.MIDDLE:
                     mouse_event(Convert.ToUInt32(0x20)/*MiddleMouseDown*/, X, Y, 0, 0);
-                    if (this.HoldSelect.Checked)
-                    {
-                        this.HoldTimer.Start();
-                        HoldDisableSide = Side;
-                        HoldX = X;
-                        HoldY = Y;
-                    }
-                    else
-                    {
+                    if (!this.HoldSelect.Checked){
                         mouse_event(Convert.ToUInt32(0x40)/*MiddleMouseUp*/, X, Y, 0, 0);
+                        return;
                     }
                     break;
                 case MouseSide.ALL:
                     mouse_event(Convert.ToUInt32(0x20)/*MiddleMouseDown*/, X, Y, 0, 0);
                     mouse_event(Convert.ToUInt32(0x02)/*LeftMouseDown*/, X, Y, 0, 0);
                     mouse_event(Convert.ToUInt32(0x08)/*RightMouseDown*/, X, Y, 0, 0);
-                    if (this.HoldSelect.Checked)
-                    {
-                        this.HoldTimer.Start();
-                        HoldDisableSide = Side;
-                        HoldX = X;
-                        HoldY = Y;
-                    }
-                    else
+                    if (!this.HoldSelect.Checked)
                     {
                         mouse_event(Convert.ToUInt32(0x40)/*MiddleMouseUp*/, X, Y, 0, 0);
                         mouse_event(Convert.ToUInt32(0x04)/*leftMouseUp*/, X, Y, 0, 0);
-                        mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, X, Y, 0, 0);
+                        mouse_event(Convert.ToUInt32(0x10)/*RightMouseUp*/, X, Y, 0, 0); 
+                        return;
                     }
                     break;
                 default:
                     Console.WriteLine("Warning: No Mousebutton has been selected.");
                     break;
             }
+            this.HoldTimer.Start();
+            HoldDisableSide = Side;
+            HoldX = X;
+            HoldY = Y;
         }
         // Simulates a mouseclick at the current position of the cursor
         private void DoMouseClickAtCursor(MouseSide Side)
@@ -260,7 +240,7 @@ namespace WindowsFormsApp1
                     {
                         this.Countdown.Text = Convert.ToString((this.CountdownTime.Value * 10 - i) / 10);
                         this.Refresh();
-                        System.Threading.Thread.Sleep(Convert.ToInt32(this.CountdownTime.Value * 100));
+                        System.Threading.Thread.Sleep(Convert.ToInt32(this.CountdownTime.Value * 10));
                     }
                     this.EnabledToggle.Enabled = true;
                     this.Countdown.Visible = false;
@@ -290,9 +270,7 @@ namespace WindowsFormsApp1
 
                 this.ClickTimer.Interval = RegularTime.TotalMillis;
                 if (RegularTime.TotalMillis > 1)
-                {
                     this.HoldSelect.Enabled = true;
-                }
                 else
                 {
                     this.HoldSelect.Enabled = false;
@@ -310,7 +288,6 @@ namespace WindowsFormsApp1
         {
             if (!InTimeOp)
             {
-
                 completeTimeOp();
                 this.HoldTimer.Interval = HoldTime.TotalMillis;
             }
@@ -366,27 +343,19 @@ namespace WindowsFormsApp1
                         }
                         timesdone++;
                         if (this.CoordinatesSelect.Checked)
-                        {
                             DoMouseClickAt(Convert.ToUInt32(this.XInput.Value), Convert.ToUInt32(this.YInput.Value), Side);
-                        }
                         else
-                        {
                             DoMouseClickAtCursor(Side);
-                        }
                         UpdateTimesDoneLabel();
                         this.Refresh();
                     }
                     else
                     {
-                        keybd_event((byte)AutoKey, 0, 0, 0);
+                        keybd_event((byte)AutoKey, 0, KEYEVENTF_EXTENDEDKEY|0, 0);
                         if (this.HoldSelect.Checked)
-                        {
                             this.HoldTimer.Start();
-                        }
                         else
-                        {
-                            keybd_event((byte)AutoKey, 0, 0x0002, 0);
-                        }
+                            keybd_event((byte)AutoKey, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
                         timesdone++;
                         UpdateTimesDoneLabel();
                         this.Refresh();
@@ -425,7 +394,7 @@ namespace WindowsFormsApp1
                 }
             }
             else
-                keybd_event((byte)AutoKey, 0, 0x0002, 0);
+                keybd_event((byte)AutoKey, 0, KEYEVENTF_EXTENDEDKEY|KEYEVENTF_KEYUP, 0);
             this.HoldTimer.Stop();
         }
 
@@ -452,15 +421,9 @@ namespace WindowsFormsApp1
                 if (!InTimeOp)
                     requireHoldTimeInitVal = true;
                 completeTimeOp();
-
-
-
             }
             else
-            {
                 this.HoldTimerBox.Visible = false;
-
-            }
         }
 
         private void CoordinatesSelect_CheckedChanged(object sender, EventArgs e)
@@ -484,30 +447,31 @@ namespace WindowsFormsApp1
         }
         private void ChangeHotkeyButton_KeyDown(object sender, KeyEventArgs e)
         {
-            if (HotkeyChangeMoused && e.KeyCode != Keys.F12)
+            if (HotkeyChangeMoused && e.KeyCode != Keys.F12 )
             {
                 UnregisterHotKey(this.Handle, 0);
                 RegisterHotKey(this.Handle, 0, 0, e.KeyCode.GetHashCode());
                 Hotkey = e.KeyCode;
-                this.HotKeyLabel.Text = getStringfromKeycode(e.KeyCode);
+                this.HotKeyLabel.Text = getStringfromKeycode(e.KeyCode).ToUpper();
             }
             else if (e.KeyCode == Keys.F12)
-            {
-                MessageBox.Show("F12 cannot be used as hotkey.", "Invalid Hotkey", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                MessageBox.Show("F12 cannot be used as Hotkey.", "Invalid Hotkey", MessageBoxButtons.OK, MessageBoxIcon.Error);
             if (Hotkey == AutoKey)
             {
                 if (Hotkey != Keys.E)
                 {
                     AutoKey = Keys.E;
-                    this.ActiveAutoKeyDisplay.Text = getStringfromKeycode(Keys.E);
+                    this.ActiveAutoKeyDisplay.Text = getStringfromKeycode(Keys.E).ToUpper();
                 }
                 else
                 {
                     AutoKey = Keys.A;
-                    this.ActiveAutoKeyDisplay.Text = getStringfromKeycode(Keys.A);
+                    this.ActiveAutoKeyDisplay.Text = getStringfromKeycode(Keys.A).ToUpper();
                 }
+                MessageBox.Show("New Hotkey was the same as Autokey, changed Autokey to "+ getStringfromKeycode(AutoKey).ToUpper() + ".", "Changed Autokey", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+            HotkeyChangeMoused = false;
+
         }
 
         private void ChangeHotkeyButton_MouseDown(object sender, MouseEventArgs e)
@@ -515,10 +479,6 @@ namespace WindowsFormsApp1
             if (ClickingEnabled)
                 toggleClicking();
             HotkeyChangeMoused = true;
-        }
-        private void ChangeHotkeyButton_MouseUp(object sender, EventArgs e)
-        {
-            HotkeyChangeMoused = false;
         }
 
         private void CoordsButton_Click(object sender, EventArgs e)
@@ -531,12 +491,11 @@ namespace WindowsFormsApp1
             if (AutoKeyChangeMoused && e.KeyCode != Hotkey)
             {
                 AutoKey = e.KeyCode;
-                this.ActiveAutoKeyDisplay.Text = getStringfromKeycode(e.KeyCode);
+                this.ActiveAutoKeyDisplay.Text = getStringfromKeycode(e.KeyCode).ToUpper();
             }
             else if (e.KeyCode == Hotkey)
-            {
-                MessageBox.Show("The AutoKey cannot be the same as your hotkey", "Invalid AutoKey", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                MessageBox.Show("The AutoKey cannot be the same as your Hotkey", "Invalid AutoKey", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            AutoKeyChangeMoused = false;
         }
 
         private void ChangeAutoKey_MouseDown(object sender, MouseEventArgs e)
@@ -544,11 +503,6 @@ namespace WindowsFormsApp1
             if(ClickingEnabled)
                 toggleClicking();
             AutoKeyChangeMoused = true;
-        }
-
-        private void ChangeAutoKey_MouseUp(object sender, EventArgs e)
-        {
-            AutoKeyChangeMoused = false;
         }
 
         private class TimeHandler
